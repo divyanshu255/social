@@ -43,8 +43,7 @@ export const createPost = async (req, res) => {
 //     const posts = await Post.find()
 //       .populate("creator", "name email")
 //       .populate("comments.user", "name")
-//       .sort({ createdAt: -1 });
-
+//       .sort({ createdAt: -1 
 //     res.status(200).json(posts);
 //   } catch (err) {
 //     res.status(500).json({ message: "Failed to fetch posts" });
