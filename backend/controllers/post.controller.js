@@ -5,7 +5,7 @@ import User from "../models/User.js";
 export const createPost = async (req, res) => {
    const userId = req.userId;
   const { caption } = req.body;
-  const imageUrl = req.file?.path;
+  const imageUrl = req.body;
 
   if (!imageUrl)
     return res.status(400).json({ message: "Image upload failed" });
@@ -38,6 +38,18 @@ export const createPost = async (req, res) => {
 
 
 
+// export const getAllPosts = async (req, res) => {
+//   try {
+//     const posts = await Post.find()
+//       .populate("creator", "name email")
+//       .populate("comments.user", "name")
+//       .sort({ createdAt: -1 });
+
+//     res.status(200).json(posts);
+//   } catch (err) {
+//     res.status(500).json({ message: "Failed to fetch posts" });
+//   }
+// };
 export const getAllPosts = async (req, res) => {
   try {
     const posts = await Post.find()
@@ -45,8 +57,16 @@ export const getAllPosts = async (req, res) => {
       .populate("comments.user", "name")
       .sort({ createdAt: -1 });
 
-    res.status(200).json(posts);
+    // Optional safety: initialize likes/comments if missing (paranoia check)
+    const sanitizedPosts = posts.map(post => ({
+      ...post.toObject(),
+      likes: post.likes || [],
+      comments: post.comments || [],
+    }));
+
+    res.status(200).json(sanitizedPosts);
   } catch (err) {
+    console.error("Fetch error:", err);
     res.status(500).json({ message: "Failed to fetch posts" });
   }
 };

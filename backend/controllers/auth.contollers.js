@@ -59,28 +59,47 @@ export const login = async (req, res) => {
 // import User from "../models/User.js";
 
 // GET /auth/me
+// export const getMe = async (req, res) => {
+//   try {
+//     const user = await User.findById(req.userId).select("-password");
+//     if (!user) return res.status(404).json({ message: "User not found" });
+//     res.status(200).json(user);
+//   } catch (err) {
+//     res.status(500).json({ message: "Server error" });
+//   }
+// };
+
+// // PUT /auth/update
+// export const updateMe = async (req, res) => {
+//   const { name } = req.body;
+//   try {
+//     const user = await User.findById(req.userId);
+//     if (!user) return res.status(404).json({ message: "User not found" });
+
+//     user.name = name || user.name;
+//     await user.save();
+
+//     res.status(200).json({ message: "Profile updated" });
+//   } catch (err) {
+//     res.status(500).json({ message: "Update failed" });
+//   }
+// };
+
 export const getMe = async (req, res) => {
   try {
     const user = await User.findById(req.userId).select("-password");
-    if (!user) return res.status(404).json({ message: "User not found" });
     res.status(200).json(user);
-  } catch (err) {
-    res.status(500).json({ message: "Server error" });
+  } catch {
+    res.status(500).json({ message: "Failed to fetch user" });
   }
 };
-
-// PUT /auth/update
 export const updateMe = async (req, res) => {
-  const { name } = req.body;
   try {
-    const user = await User.findById(req.userId);
-    if (!user) return res.status(404).json({ message: "User not found" });
-
-    user.name = name || user.name;
-    await user.save();
-
-    res.status(200).json({ message: "Profile updated" });
-  } catch (err) {
-    res.status(500).json({ message: "Update failed" });
+    const updates = (({ name, avatar, phone, location, bio }) => ({ name, avatar, phone, location, bio }))(req.body);
+    const user = await User.findByIdAndUpdate(req.userId, updates, { new: true }).select("-password");
+    res.status(200).json(user);
+  } catch {
+    res.status(500).json({ message: "Failed to update profile" });
   }
 };
+
