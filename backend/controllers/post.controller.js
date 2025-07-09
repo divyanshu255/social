@@ -5,7 +5,7 @@ import User from "../models/User.js";
 export const createPost = async (req, res) => {
    const userId = req.userId;
   const { caption } = req.body;
-  const imageUrl = req.body;
+  const imageUrl = req.body.imageUrl;
 
   if (!imageUrl)
     return res.status(400).json({ message: "Image upload failed" });
